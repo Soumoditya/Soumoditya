@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumoditya Pramanik | Web Developer Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-effect {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .skill-card:hover .skill-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.1), 0 10px 10px -5px rgba(168, 85, 247, 0.08);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #a855f7;
+            border: 4px solid #1e1b4b;
+        }
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #a855f7;
+            transition: width .3s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- SKILLS DATA & DYNAMIC INJECTION ---
+            const skills = [
+                { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
+                { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+                { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+                { name: 'Express', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg' },
+                { name: 'MongoDB', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
+                { name: 'HTML5', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
+                { name: 'CSS3', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
+                { name: 'Java', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+                { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+                { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' }
+            ];
+
+            const skillsContainer = document.getElementById('skills-grid');
+            if (skillsContainer) {
+                skills.forEach(skill => {
+                    const skillElement = document.createElement('div');
+                    skillElement.className = 'skill-card flex flex-col items-center justify-center p-6 glass-effect rounded-lg transition-transform duration-300 hover:-translate-y-2';
+                    skillElement.innerHTML = `<img src="${skill.icon}" alt="${skill.name}" class="w-12 h-12 mb-3 skill-icon transition-transform duration-300"><span class="font-semibold text-slate-300">${skill.name}</span>`;
+                    skillsContainer.appendChild(skillElement);
+                });
+            }
+
+            // --- HEADER SCROLL EFFECT ---
+            const header = document.getElementById('header');
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    header.classList.toggle('glass-effect', window.scrollY > 50);
+                });
+            }
+
+            // --- MOBILE MENU ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) {
+                const mobileMenuIcon = mobileMenuButton.querySelector('i');
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    const iconName = mobileMenu.classList.contains('hidden') ? 'menu' : 'x';
+                    mobileMenuIcon.setAttribute('data-lucide', iconName);
+                    lucide.createIcons();
+                });
+            }
+
+            // --- FADE-IN SECTIONS ON SCROLL ---
+            const sections = document.querySelectorAll('.section-fade-in');
+            if (sections.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                sections.forEach(section => observer.observe(section));
+            }
+
+            // --- BACK TO TOP BUTTON ---
+            const toTopButton = document.getElementById('to-top-button');
+            if (toTopButton) {
+                window.addEventListener('scroll', () => {
+                    toTopButton.classList.toggle('opacity-0', window.scrollY < 300);
+                });
+                toTopButton.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- INITIALIZE ICONS ---
+            lucide.createIcons();
+        });
+    </script>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white">Soumoditya<span class="text-purple-400">.</span></a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="nav-link text-slate-300 hover:text-white transition-colors">About</a>
+                <a href="#skills" class="nav-link text-slate-300 hover:text-white transition-colors">Skills</a>
+                <a href="#projects" class="nav-link text-slate-300 hover:text-white transition-colors">Projects</a>
+                <a href="#education" class="nav-link text-slate-300 hover:text-white transition-colors">Education</a>
+                <a href="#contact" class="nav-link text-slate-300 hover:text-white transition-colors">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/incognitomod" target="_blank" class="text-slate-400 hover:text-white transition-colors"><i data-lucide="github"></i></a>
+                <a href="https://linkedin.com/in/soumoditya-pramanik-598754322" target="_blank" class="text-slate-400 hover:text-white transition-colors"><i data-lucide="linkedin"></i></a>
+                <a href="https://incognitomod.github.io/Soumoditya/Soumoditya-Pramanik-FlowCV-Resume-20250729-1.pdf" download="Soumoditya-Pramanik-Resume.pdf" class="hidden md:inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">Download CV</a>
+            </div>
+             <button id="mobile-menu-button" class="md:hidden text-white">
+                <i data-lucide="menu"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900/80 backdrop-blur-sm">
+            <a href="#about" class="block py-2 px-4 text-sm text-slate-300 hover:bg-purple-700/50 hover:text-white">About</a>
+            <a href="#skills" class="block py-2 px-4 text-sm text-slate-300 hover:bg-purple-700/50 hover:text-white">Skills</a>
+            <a href="#projects" class="block py-2 px-4 text-sm text-slate-300 hover:bg-purple-700/50 hover:text-white">Projects</a>
+            <a href="#education" class="block py-2 px-4 text-sm text-slate-300 hover:bg-purple-700/50 hover:text-white">Education</a>
+            <a href="#contact" class="block py-2 px-4 text-sm text-slate-300 hover:bg-purple-700/50 hover:text-white">Contact</a>
+            <a href="https://incognitomod.github.io/Soumoditya/Soumoditya-Pramanik-FlowCV-Resume-20250729-1.pdf" download="Soumoditya-Pramanik-Resume.pdf" class="block py-3 px-4 text-center bg-purple-600 text-white font-semibold rounded-lg m-4">Download CV</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6">
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex flex-col justify-center items-center text-center pt-24 md:pt-0">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                    <span class="block">Soumoditya Pramanik</span>
+                    <span class="gradient-text block mt-2 md:mt-4 min-h-[4rem] md:min-h-[5rem]">Full-Stack Developer</span>
+                </h1>
+                <p class="mt-6 text-lg md:text-xl text-slate-400 max-w-2xl mx-auto">
+                    A passionate Bachelor of Computer Applications graduate with a strong foundation in full-stack web development. Eager to build innovative and user-friendly web experiences.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#projects" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">View My Work</a>
+                    <a href="#contact" class="bg-gray-700/50 hover:bg-gray-600/50 border border-slate-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 w-full sm:w-auto">Get In Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 md:py-32 section-fade-in">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">About <span class="gradient-text">Me</span></h2>
+                <p class="text-slate-400 mt-2">A little bit about my journey and passion.</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                <div class="md:w-1/3 flex justify-center">
+                    <div class="w-64 h-64 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 p-1">
+                        <img src="https://incognitomod.github.io/Soumoditya/1760201123169.jpg" alt="Soumoditya Pramanik" class="rounded-full w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="md:w-2/3 text-center md:text-left">
+                    <p class="text-lg text-slate-300 mb-4">
+                        I am a recent Bachelor of Computer Applications (BCA) graduate with a solid foundation in programming languages and web technologies, including Python, Java, and the MERN stack. My academic journey at Brainware University has provided me with a comprehensive understanding of software development principles and practices.
+                    </p>
+                    <p class="text-lg text-slate-300">
+                        I am passionate about creating clean, efficient, and scalable web applications. I thrive in collaborative environments and am always eager to learn new technologies. I'm now actively seeking opportunities to apply my skills in a professional setting, contribute to a dynamic team, and continue growing as a developer.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 md:py-32 section-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">My <span class="gradient-text">Skills</span></h2>
+                <p class="text-slate-400 mt-2">Technologies and tools I work with.</p>
+            </div>
+            <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <!-- Skill items will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-32 section-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">My <span class="gradient-text">Projects</span></h2>
+                <p class="text-slate-400 mt-2">A selection of my work.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="project-card glass-effect rounded-xl overflow-hidden p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-white mb-2">E-Support & E-Library Website</h3>
+                    <p class="text-slate-400 mb-4">
+                        A full-stack educational web platform that centralizes academic resources like study materials, guides, and tutorials. Features a clean UI, categorized content, and interactive contact support to enhance the learning experience.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="bg-purple-900/50 text-purple-300 text-xs font-semibold px-2.5 py-1 rounded-full">React</span>
+                        <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">Node.js</span>
+                        <span class="bg-gray-700 text-gray-200 text-xs font-semibold px-2.5 py-1 rounded-full">Express.js</span>
+                        <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">MongoDB</span>
+                        <span class="bg-yellow-900/50 text-yellow-300 text-xs font-semibold px-2.5 py-1 rounded-full">JavaScript</span>
+                        <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">CSS</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="#" class="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-2 cursor-not-allowed opacity-50" title="Live Demo Not Available">
+                            <i data-lucide="external-link" class="w-5 h-5"></i> Live Demo
+                        </a>
+                        <a href="https://github.com/incognitomod/Soumoditya" target="_blank" class="text-slate-400 hover:text-white font-semibold flex items-center gap-2">
+                            <i data-lucide="github" class="w-5 h-5"></i> Source Code
+                        </a>
+                    </div>
+                </div>
+                <!-- Add more project cards here -->
+                <div class="project-card glass-effect rounded-xl flex flex-col justify-center items-center p-6 md:p-8 border-2 border-dashed border-slate-700">
+                    <i data-lucide="lightbulb" class="w-12 h-12 text-slate-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-400 mb-2">New Project Coming Soon</h3>
+                    <p class="text-slate-500 text-center">I'm always working on something new. Check back later!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="py-20 md:py-32 section-fade-in">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold">My <span class="gradient-text">Education</span> & Certs</h2>
+                <p class="text-slate-400 mt-2">My academic background and certifications.</p>
+            </div>
+            <div class="relative max-w-2xl mx-auto">
+                <div class="absolute left-0 h-full border-l-2 border-slate-700" style="margin-left: -20px;"></div>
+                <div class="space-y-12">
+                    <div class="timeline-item relative pl-8">
+                        <h3 class="text-xl font-bold text-white">Bachelor of Computer Applications (BCA)</h3>
+                        <p class="text-purple-400 font-medium">Brainware University, Barasat</p>
+                        <p class="text-sm text-slate-400 mb-2">2022 - 2025 | CGPA: 7.48</p>
+                    </div>
+                    <div class="timeline-item relative pl-8">
+                        <h3 class="text-xl font-bold text-white">Java Programming Certification</h3>
+                        <p class="text-purple-400 font-medium">Great Learning Academy</p>
+                        <p class="text-sm text-slate-400 mb-2">Completed course on core Java principles.</p>
+                    </div>
+                     <div class="timeline-item relative pl-8">
+                        <h3 class="text-xl font-bold text-white">Higher Secondary Education (WBCHSE)</h3>
+                        <p class="text-purple-400 font-medium">Rampurhat J.L. Vidyabhaban</p>
+                        <p class="text-sm text-slate-400 mb-2">2022 | 82.8%</p>
+                    </div>
+                    <div class="timeline-item relative pl-8">
+                        <h3 class="text-xl font-bold text-white">Secondary Education (WBBSE)</h3>
+                        <p class="text-purple-400 font-medium">Rampurhat J.L. Vidyabhaban</p>
+                        <p class="text-sm text-slate-400 mb-2">2020 | 70.28%</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 md:py-32 section-fade-in">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">Get In <span class="gradient-text">Touch</span></h2>
+                <p class="text-slate-400 mt-2">I'm open to new opportunities and collaborations.</p>
+            </div>
+            <div class="max-w-xl mx-auto glass-effect p-8 rounded-xl text-center">
+                <p class="text-lg text-slate-300 mb-6">
+                    Have a project in mind or just want to say hello? My inbox is always open. I'll get back to you as soon as possible!
+                </p>
+                <a href="mailto:soumodityapramanik@gmail.com" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                   Say Hello 👋
+                </a>
+                 <div class="mt-8 flex justify-center items-center space-x-6">
+                    <a href="mailto:soumodityapramanik@gmail.com" class="text-slate-400 hover:text-white transition-colors flex 
